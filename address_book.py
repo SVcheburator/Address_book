@@ -1,24 +1,30 @@
 from collections import UserDict
 
+class Field:
+    def __init__(self, name = None, phone = None, email = None):
+        if name:
+            self.name = name
+        if phone:
+            self.phone = phone
+        if email:
+            self.email = email
 
-class Phone():
-    def __init__(self, phone):
-        self.phone = phone
+
+class Phone(Field):
+    pass
 
 
-class Email():
-    def __init__(self, email):
-        self.email = email
+class Email(Field):
+    pass
 
 
-class Name:
-    def __init__(self, name):
-        self.name = name
+class Name(Field):
+    pass
 
 
 class Record:
     def __init__(self, person_name, phone_num=None, email=None):
-        self.name = person_name.name
+        self.name = person_name
         if phone_num:
             self.phones = []
             self.phones.append(phone_num)
@@ -92,7 +98,7 @@ class Record:
             print(f'There is no such email as {some_email.email}\n')
 
     def __str__(self):
-        result = f'\nName: {self.name}\n'
+        result = f'\nName: {self.name.name}\n'
         try:
             p = list(x.phone for x in self.phones)
             result += f'Phones: {p}\n'
@@ -111,8 +117,8 @@ class Record:
 
 class AddressBook(UserDict):
     def add_record(self, record):
-        self.data[record.name] = record
-        print(f'One contact ({record.name}) has been successfully added!\n')
+        self.data[record.name.name] = record
+        print(f'One contact ({record.name.name}) has been successfully added!\n')
 
     def delete_record(self, name_to_delete):
         for username in self.data.keys():
@@ -147,16 +153,27 @@ ab = AddressBook()
 
 def add_contact(inp_split_lst):
     if 'phone' in inp_split_lst:
+        input_name = ' '.join(inp_split_lst[1:inp_split_lst.index('phone')])
+
         if 'email' in inp_split_lst:
-            ab.add_record(Record(Name(' '.join(inp_split_lst[1:inp_split_lst.index('phone')])), Phone(' '.join(inp_split_lst[inp_split_lst.index('phone')+1:inp_split_lst.index('email')])), Email(' '.join(inp_split_lst[inp_split_lst.index('email')+1:]))))
+            input_phone = ' '.join(inp_split_lst[inp_split_lst.index('phone')+1:inp_split_lst.index('email')])
+            input_email = ' '.join(inp_split_lst[inp_split_lst.index('email')+1:])
+
+            ab.add_record(Record(Name(name=input_name), Phone(phone=input_phone), Email(email=input_email)))
         else:
-            ab.add_record(Record(Name(' '.join(inp_split_lst[1:inp_split_lst.index('phone')])), Phone(' '.join(inp_split_lst[inp_split_lst.index('phone')+1:]))))
+            input_phone = ' '.join(inp_split_lst[inp_split_lst.index('phone')+1:])
+
+            ab.add_record(Record(Name(name=input_name), Phone(phone=input_phone)))
 
     else:
         if 'email' in inp_split_lst:
-            ab.add_record(Record(Name(' '.join(inp_split_lst[1:inp_split_lst.index('email')])), email=Email(' '.join(inp_split_lst[inp_split_lst.index('email')+1:]))))
+            input_name = ' '.join(inp_split_lst[1:inp_split_lst.index('email')])
+            input_email = ' '.join(inp_split_lst[inp_split_lst.index('email')+1:])
+
+            ab.add_record(Record(Name(name=input_name), email=Email(email=input_email)))
         else:
-            ab.add_record(Record(Name(' '.join(inp_split_lst[1:]))))
+            input_name = ' '.join(inp_split_lst[1:])
+            ab.add_record(Record(Name(name=input_name)))
 
 
 def input_error(function):
@@ -172,28 +189,42 @@ def input_error(function):
 
 @input_error
 def add_number(inp_split_lst):
-    ab[' '.join(inp_split_lst[1:inp_split_lst.index('phone')])].add_phone(Phone(' '.join(inp_split_lst[inp_split_lst.index('phone')+1:])))
+    name = ' '.join(inp_split_lst[1:inp_split_lst.index('phone')])
+    add_ph = ' '.join(inp_split_lst[inp_split_lst.index('phone')+1:])
+    ab[name].add_phone(Phone(phone=add_ph))
 
 @input_error
 def change_number(inp_split_lst):
-    ab[' '.join(inp_split_lst[1:inp_split_lst.index('phone')])].change_phone(Phone(' '.join(inp_split_lst[inp_split_lst.index('phone')+1:inp_split_lst.index('to')])), Phone(' '.join(inp_split_lst[inp_split_lst.index('to')+1:])))
+    name = ' '.join(inp_split_lst[1:inp_split_lst.index('phone')])
+    change_ph_from = ' '.join(inp_split_lst[inp_split_lst.index('phone')+1:inp_split_lst.index('to')])
+    change_ph_to = ' '.join(inp_split_lst[inp_split_lst.index('to')+1:])
+    ab[name].change_phone(Phone(phone=change_ph_from), Phone(phone=change_ph_to))
 
 @input_error
 def delete_number(inp_split_lst):
-    ab[' '.join(inp_split_lst[1:inp_split_lst.index('phone')])].delete_phone(Phone(' '.join(inp_split_lst[inp_split_lst.index('phone')+1:])))
+    name = ' '.join(inp_split_lst[1:inp_split_lst.index('phone')])
+    del_ph = ' '.join(inp_split_lst[inp_split_lst.index('phone')+1:])
+    ab[name].delete_phone(Phone(phone=del_ph))
 
 
 @input_error
 def add_email(inp_split_lst):
-    ab[' '.join(inp_split_lst[1:inp_split_lst.index('email')])].add_email(Email(' '.join(inp_split_lst[inp_split_lst.index('email')+1:])))
+    name = ' '.join(inp_split_lst[1:inp_split_lst.index('email')])
+    add_em = ' '.join(inp_split_lst[inp_split_lst.index('email')+1:])
+    ab[name].add_email(Email(email=add_em))
 
 @input_error
 def change_email(inp_split_lst):
-    ab[' '.join(inp_split_lst[1:inp_split_lst.index('email')])].change_email(Email(' '.join(inp_split_lst[inp_split_lst.index('email')+1:inp_split_lst.index('to')])), Email(' '.join(inp_split_lst[inp_split_lst.index('to')+1:])))
+    name = ' '.join(inp_split_lst[1:inp_split_lst.index('email')])
+    change_em_from = ' '.join(inp_split_lst[inp_split_lst.index('email')+1:inp_split_lst.index('to')])
+    change_em_to = ' '.join(inp_split_lst[inp_split_lst.index('to')+1:])
+    ab[name].change_email(Email(email=change_em_from), Email(email=change_em_to))
 
 @input_error
 def delete_email(inp_split_lst):
-    ab[' '.join(inp_split_lst[1:inp_split_lst.index('email')])].delete_email(Email(' '.join(inp_split_lst[inp_split_lst.index('email')+1:])))
+    name = ' '.join(inp_split_lst[1:inp_split_lst.index('email')])
+    del_em = ' '.join(inp_split_lst[inp_split_lst.index('email')+1:])
+    ab[name].delete_email(Email(email=del_em))
 
 
 
