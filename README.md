@@ -1,6 +1,6 @@
 ﻿# **commands availible:**
 
-['add_contact', 'delete_contact', 'add_number', 'change_number', 'delete_number', 'add_email', 'change_email', 'delete_email', 'show_all', 'close', 'exit']
+['add_contact', 'delete_contact', 'add_number', 'change_number', 'delete_number', 'add_email', 'change_email', 'delete_email', 'add_birthday', 'change_birthday', 'delete_birthday', 'show', 'show_all', 'close', 'exit']
 # **Operations with contacts:**
 # add_contact
 
@@ -10,12 +10,15 @@ add_contact *username* phone *userphone* email *useremail*
 Words phone and email before corresponding data are always required
 
 ## examples(add_contact):
-
+	add_contact Sasha Cheburatenko phone +380661111111 email chebusania@gmail.com birthday 10 07 2006
+	
     add_contact Sasha Cheburatenko phone +380661111111 email chebusania@gmail.com
 
     add_contact Sasha Cheburatenko phone +380661111111
 
     add_contact Sasha Cheburatenko email chebusania@gmail.com
+    
+    add_contact Sasha Cheburatenko birthday 10 07 2006
     
     add_contact Sasha Cheburatenko
 
@@ -61,10 +64,18 @@ Work just the same way as operations with phone numbers
     add_email Sasha Cheburatenko email chebusania2@gmail.com
     change_email Sasha Cheburatenko email chebusania2@gmail.com to chebusania3@gmail.com
     delete_email Sasha Cheburatenko email chebusania3@gmail.com
+
+# **Operations with birthday:**
+Work just the same way as operations with phone numbers and emails
+
+# **show**
+Displays all information about contacts, dividing it into pages of 2 contacts
+## next
+Turns the page
+
 # **show_all**
 Displays all the information about contacts
 
 # **close and exit**
 Simply stop the work of the program
 Work in the same way both
-
