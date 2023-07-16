@@ -16,6 +16,7 @@ class Field:
             self.__birthday = None
             self.birthday = birthday
 
+
 class Birthday(Field):
     @property
     def birthday(self):
@@ -25,8 +26,7 @@ class Birthday(Field):
     @birthday.setter
     def birthday(self, birthday):
         try:
-            date_splt_lst = birthday.split()
-            self.__birthday = datetime(day=int(date_splt_lst[0]), month=int(date_splt_lst[1]), year=int(date_splt_lst[2]))
+            self.__birthday = datetime.strptime(birthday, "%d %m %Y")
         except ValueError:
             self.__birthday = None
             print("That is incorrect birthday!")
