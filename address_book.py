@@ -2,6 +2,37 @@ from collections import UserDict
 from datetime import datetime
 
 
+# Custom errors
+class BirthdayError(Exception):
+    pass
+
+
+class PhoneError(Exception):
+    pass
+
+
+# Decorator
+def error_keeper(function):
+    def inner(*args):
+        try:
+            function(*args)
+        except BirthdayError:
+            print('That is incorrect birthday!')
+        except PhoneError as pe:
+            if pe.args:
+                print(f'This phone number is too {pe.args[0]}!')
+            else:
+                print('That is incorrect phone number!')
+        except ValueError:
+            print('Something is wrong!\nGo to README.md to check the correctness\n')
+        except AttributeError:
+            print('Something is wrong!\nGo to README.md to check the correctness\n')
+        except KeyError:
+            print('Name is incorrect!\n')
+
+    return inner
+
+
 # Classes
 class Field:
     def __init__(self, name=None, phone=None, email=None, birthday=None):
@@ -23,16 +54,18 @@ class Birthday(Field):
         if self.__birthday:
             return self.__birthday
 
+    
     @birthday.setter
+    @error_keeper
     def birthday(self, birthday):
         try:
             self.__birthday = datetime.strptime(birthday, "%d %m %Y")
         except ValueError:
             self.__birthday = None
-            print("That is incorrect birthday!")
+            raise BirthdayError
         except IndexError:
             self.__birthday = None
-            print("That is incorrect birthday!")
+            raise BirthdayError
 
 
 class Phone(Field):
@@ -42,21 +75,22 @@ class Phone(Field):
             return self.__phone
 
     @phone.setter
+    @error_keeper
     def phone(self, phone):
         try:
             if int(phone.strip()) or (phone.startswith('+') and int(phone[1:])):
                 self.__phone = phone
                 if 10 > len(phone):
-                    print('Phone number is too short\n')
                     self.__phone = None
+                    raise PhoneError('short')
                 if 13 < len(phone):
-                    print('Phone number is too long\n')
                     self.__phone = None
+                    raise PhoneError('long')
             else:
                 self.__phone = None
         except ValueError:
             self.__phone = None
-            print('Incorrect phone!')
+            raise PhoneError
 
 
 class Email(Field):
@@ -87,7 +121,7 @@ class Record:
             try:
                 self.phones.append(extra_phone)
                 for x in self.phones:
-                    print(x.phone)
+                    x.phone
             except AttributeError:
                 self.phones = []
                 self.phones.append(extra_phone)
@@ -99,8 +133,8 @@ class Record:
 
     def change_phone(self, some_phone, different_phone):
         try:
+            flag = False
             if different_phone.phone != None:
-                flag = False
                 for ph in self.phones:
                     if ph.phone == some_phone.phone:
                         self.phones.append(different_phone)
@@ -110,7 +144,7 @@ class Record:
         except AttributeError:
             flag == False
         if flag == False:
-                    print(f'There is no such phone as {some_phone.phone}\n')
+            print(f'There is no such phone!')
 
     def delete_phone(self, some_phone):
         try:
@@ -126,13 +160,13 @@ class Record:
             
         if flag == False:
             print(f'There is no such phone as {some_phone.phone}\n')
-            
+
     # Email operations
     def add_email(self, extra_email):
         try:
             self.emails.append(extra_email)
             for x in self.emails:
-                    print(x.email)
+                x.email
         except AttributeError:
             self.emails = []
             self.emails.append(extra_email)
@@ -210,7 +244,7 @@ class Record:
     def __str__(self):
         result = f'\nName: {self.name.name}\n'
         try:
-            p = list(x.phone for x in self.phones)
+            p = list(x.phone for x in self.phones if x.phone != None)
             if len(p) > 0:
                 result += f'Phones: {p}\n'
         except AttributeError:
@@ -338,23 +372,9 @@ def add_contact(inp_split_lst):
 
     ab.add_record(Record(Name(name=input_name), Phone(phone=input_phone), Email(email=input_email), Birthday(birthday=input_birthday)))
 
-# Decorator
-def input_error(function):
-    def inner(*args):
-        try:
-            function(*args)
-        except ValueError as ve:
-            print('Something is wrong!\nGo to README.md to check the correctness\n')
-            print(ve)
-        except AttributeError as ae:
-            print('Something is wrong!\nGo to README.md to check the correctness\n')
-            print(ae)
-        except KeyError:
-            print('Name is incorrect!\n')
-    return inner
 
 # Field operations
-@input_error
+@error_keeper
 def add_field(inp_split_lst, type):
     if type == 'number':
         name = ' '.join(inp_split_lst[1:inp_split_lst.index('phone')])
@@ -371,7 +391,7 @@ def add_field(inp_split_lst, type):
         add_bd = ' '.join(inp_split_lst[inp_split_lst.index('birthday')+1:])
         ab[name].add_birthday(Birthday(birthday=add_bd))
 
-@input_error
+@error_keeper
 def change_field(inp_split_lst, type):
     if type == 'number':
         name = ' '.join(inp_split_lst[1:inp_split_lst.index('phone')])
@@ -391,7 +411,7 @@ def change_field(inp_split_lst, type):
         change_bd_to = ' '.join(inp_split_lst[inp_split_lst.index('to')+1:])
         ab[name].change_birthday(Birthday(birthday=change_bd_from), Birthday(birthday=change_bd_to))
 
-@input_error
+@error_keeper
 def delete_field(inp_split_lst, type):
     if type == 'number':
         name = ' '.join(inp_split_lst[1:inp_split_lst.index('phone')])
