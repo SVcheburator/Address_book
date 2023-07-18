@@ -68,6 +68,9 @@ Work just the same way as operations with phone numbers
 # **Operations with birthday:**
 Work just the same way as operations with phone numbers and emails
 
+# **find**
+    find *any info*
+
 # **show**
 Displays all information about contacts, dividing it into pages of 2 contacts
 ## next

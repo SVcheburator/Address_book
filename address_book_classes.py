@@ -37,59 +37,59 @@ def error_keeper(function):
 class Field:
     def __init__(self, name=None, phone=None, email=None, birthday=None):
         if name:
-            self.name = name
+            self.value = name
         if phone:
-            self.__phone = None
-            self.phone = phone
+            self.__value = None
+            self.value = phone
         if email:
-            self.email = email
+            self.value = email
         if birthday:
-            self.__birthday = None
-            self.birthday = birthday
+            self.__value = None
+            self.value = birthday
 
 
 class Birthday(Field):
     @property
-    def birthday(self):
-        if self.__birthday:
-            return self.__birthday
+    def value(self):
+        if self.__value:
+            return self.__value
 
     
-    @birthday.setter
+    @value.setter
     @error_keeper
-    def birthday(self, birthday):
+    def value(self, value):
         try:
-            self.__birthday = datetime.strptime(birthday, "%d %m %Y")
+            self.__value = datetime.strptime(value, "%d %m %Y")
         except ValueError:
-            self.__birthday = None
+            self.__value = None
             raise BirthdayError
         except IndexError:
-            self.__birthday = None
+            self.__value = None
             raise BirthdayError
 
 
 class Phone(Field):
     @property
-    def phone(self):
-        if self.__phone:
-            return self.__phone
+    def value(self):
+        if self.__value:
+            return self.__value
 
-    @phone.setter
+    @value.setter
     @error_keeper
-    def phone(self, phone):
+    def value(self, value):
         try:
-            if int(phone.strip()) or (phone.startswith('+') and int(phone[1:])):
-                self.__phone = phone
-                if 10 > len(phone):
-                    self.__phone = None
+            if int(value.strip()) or (value.startswith('+') and int(value[1:])):
+                self.__value = value
+                if 10 > len(value):
+                    self.__value = None
                     raise PhoneError('short')
-                if 13 < len(phone):
-                    self.__phone = None
+                if 13 < len(value):
+                    self.__value = None
                     raise PhoneError('long')
             else:
-                self.__phone = None
+                self.__value = None
         except ValueError:
-            self.__phone = None
+            self.__value = None
             raise PhoneError
 
 
@@ -121,25 +121,25 @@ class Record:
             try:
                 self.phones.append(extra_phone)
                 for x in self.phones:
-                    x.phone
+                    x.value
             except AttributeError:
                 self.phones = []
                 self.phones.append(extra_phone)
 
-            if flag == True and extra_phone.phone != None:
-                print(f'Phone number {extra_phone.phone} has been successfully added!\n')
+            if flag == True and extra_phone.value != None:
+                print(f'Phone number {extra_phone.value} has been successfully added!\n')
         except AttributeError:
             pass
 
     def change_phone(self, some_phone, different_phone):
         try:
             flag = False
-            if different_phone.phone != None:
+            if different_phone.value != None:
                 for ph in self.phones:
-                    if ph.phone == some_phone.phone:
+                    if ph.value == some_phone.value:
                         self.phones.append(different_phone)
                         self.phones.remove(ph)
-                        print(f'Phone number {some_phone.phone} has been successfully changed to {different_phone.phone}\n')
+                        print(f'Phone number {some_phone.value} has been successfully changed to {different_phone.value}\n')
                         flag = True
         except AttributeError:
             flag == False
@@ -148,118 +148,118 @@ class Record:
 
     def delete_phone(self, some_phone):
         try:
-            if some_phone.phone != None:
+            if some_phone.value != None:
                 flag = False
                 for ph in self.phones:
-                    if ph.phone == some_phone.phone:
+                    if ph.value == some_phone.value:
                         self.phones.remove(ph)
                         flag = True
-                        print(f'Phone number {some_phone.phone} has been successfully deleted\n')
+                        print(f'Phone number {some_phone.value} has been successfully deleted\n')
         except AttributeError:
             flag = False
             
         if flag == False:
-            print(f'There is no such phone as {some_phone.phone}\n')
+            print(f'There is no such phone as {some_phone.value}\n')
 
     # Email operations
     def add_email(self, extra_email):
         try:
             self.emails.append(extra_email)
             for x in self.emails:
-                x.email
+                x.value
         except AttributeError:
             self.emails = []
             self.emails.append(extra_email)
 
-        print(f'Email {extra_email.email} has been successfully added!\n')
+        print(f'Email {extra_email.value} has been successfully added!\n')
 
     def change_email(self, some_email, different_email):
         flag = False
         try:
             for em in self.emails:
-                if em.email == some_email.email:
+                if em.value == some_email.value:
                     self.emails.remove(em)
                     self.emails.append(different_email)
-                    print(f'Email {some_email.email} has been successfully changed to {different_email.email}\n')
+                    print(f'Email {some_email.value} has been successfully changed to {different_email.value}\n')
                     flag = True
         except AttributeError:
             flag == False
 
         if flag == False:
-                print(f'There is no such email as {some_email.email}\n')
+                print(f'There is no such email as {some_email.value}\n')
 
     def delete_email(self, some_email):
         flag = False
         try:
             for em in self.emails:
-                if em.email == some_email.email:
+                if em.value == some_email.value:
                     self.emails.remove(em)
                     flag = True
-                    print(f'Email {some_email.email} has been successfully deleted\n')
+                    print(f'Email {some_email.value} has been successfully deleted\n')
         except AttributeError:
             flag == False
 
         if flag == False:
-                print(f'There is no such email as {some_email.email}\n')
+                print(f'There is no such email as {some_email.value}\n')
 
     # Birthday operations
     def days_to_birthday(self):
-        self.birthday.birthday
-        bd = datetime(year=datetime.now().year, month=self.birthday.birthday.month, day=self.birthday.birthday.day)
+        self.birthday.value
+        bd = datetime(year=datetime.now().year, month=self.birthday.value.month, day=self.birthday.value.day)
         delta = bd - datetime.now()
         if delta.days < 0:
-            delta = datetime(year=datetime.now().year+1, month=self.birthday.birthday.month, day=self.birthday.birthday.day) - datetime.now()
+            delta = datetime(year=datetime.now().year+1, month=self.birthday.value.month, day=self.birthday.value.day) - datetime.now()
         return delta.days+1
     
     def add_birthday(self, extra_birthday):
         self.birthday = extra_birthday
-        print(f'Birthday {extra_birthday.birthday.date()} has been successfully added!\n')
+        print(f'Birthday {extra_birthday.value.date()} has been successfully added!\n')
 
     def change_birthday(self, some_bd, different_bd):
         flag = False
         try:
-            if self.birthday.birthday == some_bd.birthday:
+            if self.birthday.value == some_bd.value:
                 self.birthday = different_bd
-                print(f'Birthday {some_bd.birthday.date()} has been successfully changed to {different_bd.birthday.date()}\n')
+                print(f'Birthday {some_bd.value.date()} has been successfully changed to {different_bd.value.date()}\n')
                 flag = True
         except AttributeError:
             flag == False
 
         if flag == False:
-                print(f'There is no such birthday as {some_bd.birthday.date()}\n')
+                print(f'There is no such birthday as {some_bd.value.date()}\n')
     
     def delete_birthday(self, some_bd):
         flag = False
         try:
-            if self.birthday.birthday == some_bd.birthday:
+            if self.birthday.value == some_bd.value:
                 self.birthday = None
                 flag = True
-                print(f'Birthday {some_bd.birthday.date()} has been successfully deleted\n')
+                print(f'Birthday {some_bd.value.date()} has been successfully deleted\n')
         except AttributeError:
             flag == False
         
         if flag == False:
-                print(f'There is no such birthday as {some_bd.birthday.date()}\n')
+            print(f'There is no such birthday as {some_bd.value.date()}\n')
 
     def __str__(self):
-        result = f'\nName: {self.name.name}\n'
+        result = f'\nName: {self.name.value}\n'
         try:
-            p = list(x.phone for x in self.phones if x.phone != None)
+            p = list(x.value for x in self.phones if x.value != None)
             if len(p) > 0:
                 result += f'Phones: {p}\n'
         except AttributeError:
             pass
 
         try:
-            e = list(x.email for x in self.emails)
+            e = list(x.value for x in self.emails)
             if len(e) > 0:
                 result += f'Emails: {e}\n'
         except AttributeError:
             pass
 
         try:
-            result += f'Birthday: {self.birthday.birthday.date()}'
-            result += f'\nDays to next birthday: {str(ab[self.name.name].days_to_birthday())}\n'
+            result += f'Birthday: {self.birthday.value.date()}'
+            result += f'\nDays to next birthday: {str(ab[self.name.value].days_to_birthday())}\n'
         except AttributeError:
             pass
 
@@ -268,8 +268,8 @@ class Record:
 
 class AddressBook(UserDict):
     def add_record(self, record):
-        self.data[record.name.name] = record
-        print(f'One contact ({record.name.name}) has been successfully added!\n')
+        self.data[record.name.value] = record
+        print(f'One contact ({record.name.value}) has been successfully added!\n')
 
     def delete_record(self, name_to_delete):
         for username in self.data.keys():
@@ -279,7 +279,36 @@ class AddressBook(UserDict):
                 return None
             
         print(f'There is no such contact as {name_to_delete}\n')
-        
+
+    def find_contact(self, inp):
+        def inner_find(inp, rec):
+            for attr in rec.__dict__.values():
+                try:
+                    if attr.value != None and inp in str(attr.value):
+                        result = str(rec)
+                        return result
+                except AttributeError:
+                    try:
+                        for i in attr:
+                            if i.value != None and inp in str(i.value):
+                                result = str(rec)
+                                return result
+                    except AttributeError:
+                        pass
+                    except TypeError:
+                        pass
+            return ''
+
+        result = ''
+
+        for rec in self.data.values():
+            result += inner_find(inp, rec)
+            
+        if len(result) > 0:
+            print(result)
+        else:
+            print(f"Nothing was found by '{inp}'\n")
+
     current_index = 0
 
     def __next__(self):

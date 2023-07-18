@@ -121,6 +121,10 @@ def delete_field(inp_split_lst, type):
         name = ' '.join(inp_split_lst[1:inp_split_lst.index('birthday')])
         del_bd = ' '.join(inp_split_lst[inp_split_lst.index('birthday')+1:])
         ab[name].delete_birthday(Birthday(birthday=del_bd))
+    
+def find_func(inp_split_lst):
+    inp = ' '.join(inp_split_lst[1:]).strip()
+    ab.find_contact(inp)
 
 
 # Main function with all input logic
@@ -128,7 +132,7 @@ def main():
     while True:
         ask = input('>>> ')
         inp_split_lst = ask.split(' ')
-        commands = ['add_contact', 'delete_contact', 'add_number', 'change_number', 'delete_number', 'add_email', 'change_email', 'delete_email', 'add_birthday', 'change_birthday', 'delete_birthday', 'show', 'show_all', 'close', 'exit']
+        commands = ['add_contact', 'delete_contact', 'add_number', 'change_number', 'delete_number', 'add_email', 'change_email', 'delete_email', 'add_birthday', 'change_birthday', 'delete_birthday', 'find', 'show', 'show_all', 'close', 'exit']
         command = inp_split_lst[0].lower()
         
         if command == 'hello':
@@ -172,6 +176,9 @@ def main():
 
         elif command == 'delete_birthday':
             delete_field(inp_split_lst, 'birthday')
+
+        elif command == 'find':
+            find_func(inp_split_lst)
 
         elif command == 'show':
             iter()
