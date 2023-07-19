@@ -102,7 +102,8 @@ class Name(Field):
 
 
 class Record:
-    def __init__(self, person_name, phone_num=None, email=None, birthday=None):
+    def __init__(self, person_name, phone_num=None, email=None, birthday=None, ab=None):
+        self.ab = ab
         self.name = person_name
         if phone_num:
             self.phones = []
@@ -259,7 +260,7 @@ class Record:
 
         try:
             result += f'Birthday: {self.birthday.value.date()}'
-            result += f'\nDays to next birthday: {str(ab[self.name.value].days_to_birthday())}\n'
+            result += f'\nDays to next birthday: {str(self.ab[self.name.value].days_to_birthday())}\n'
         except AttributeError:
             pass
 
@@ -326,12 +327,3 @@ class AddressBook(UserDict):
         for rec in self.data.values():
             result += str(rec)
         return result
-    
-ab = AddressBook()
-
-# Iterator
-class ABIterator:
-    def __iter__(self):
-        return ab
-
-abi = ABIterator()

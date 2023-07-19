@@ -1,4 +1,16 @@
-from address_book_classes import Birthday, Phone, Email, Name, Record, ab, abi, error_keeper 
+import pickle
+import address_book_classes
+from address_book_classes import Birthday, Phone, Email, Name, Record, AddressBook, error_keeper 
+
+
+ab = AddressBook()
+
+# Iterator
+class ABIterator:
+    def __iter__(self):
+        return ab
+
+abi = ABIterator()
 
 
 def iter():
@@ -64,7 +76,7 @@ def add_contact(inp_split_lst):
         except ValueError:
             pass
 
-    ab.add_record(Record(Name(name=input_name), Phone(phone=input_phone), Email(email=input_email), Birthday(birthday=input_birthday)))
+    ab.add_record(Record(Name(name=input_name), Phone(phone=input_phone), Email(email=input_email), Birthday(birthday=input_birthday), ab=ab))
 
 
 # Field operations
@@ -127,9 +139,40 @@ def find_func(inp_split_lst):
     ab.find_contact(inp)
 
 
+def save_data():
+    with open('ab_save.bin', 'wb') as f:
+        pickle.dump(ab, f)
+
+def load_data():
+    try:
+        with open('ab_save.bin', 'rb') as f:
+            try:
+                ab = pickle.load(f)
+                return ab
+            except EOFError:
+                try:
+                    ab = pickle.loads(f)
+                    return ab
+                except TypeError:
+                    ab = AddressBook()
+                    return ab
+            except TypeError:
+                ab = AddressBook()
+                return ab
+    
+    except FileNotFoundError:
+        with open('ab_save.bin', 'x'):
+            pass
+        load_data()
+
+    
+
+
 # Main function with all input logic
 def main():
     while True:
+        save_data()
+
         ask = input('>>> ')
         inp_split_lst = ask.split(' ')
         commands = ['add_contact', 'delete_contact', 'add_number', 'change_number', 'delete_number', 'add_email', 'change_email', 'delete_email', 'add_birthday', 'change_birthday', 'delete_birthday', 'find', 'show', 'show_all', 'close', 'exit']
@@ -198,4 +241,7 @@ def main():
 
 
 if __name__ == "__main__":
+    ab = load_data()
+    if isinstance(ab, address_book_classes.AddressBook) == False:
+        ab = AddressBook()
     main()
