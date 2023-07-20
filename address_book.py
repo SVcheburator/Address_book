@@ -1,5 +1,3 @@
-import pickle
-import address_book_classes
 from address_book_classes import Birthday, Phone, Email, Name, Record, AddressBook, error_keeper 
 
 
@@ -139,39 +137,10 @@ def find_func(inp_split_lst):
     ab.find_contact(inp)
 
 
-def save_data():
-    with open('ab_save.bin', 'wb') as f:
-        pickle.dump(ab, f)
-
-def load_data():
-    try:
-        with open('ab_save.bin', 'rb') as f:
-            try:
-                ab = pickle.load(f)
-                return ab
-            except EOFError:
-                try:
-                    ab = pickle.loads(f)
-                    return ab
-                except TypeError:
-                    ab = AddressBook()
-                    return ab
-            except TypeError:
-                ab = AddressBook()
-                return ab
-    
-    except FileNotFoundError:
-        with open('ab_save.bin', 'x'):
-            pass
-        load_data()
-
-    
-
-
 # Main function with all input logic
 def main():
     while True:
-        save_data()
+        ab.save_data()
 
         ask = input('>>> ')
         inp_split_lst = ask.split(' ')
@@ -241,7 +210,5 @@ def main():
 
 
 if __name__ == "__main__":
-    ab = load_data()
-    if isinstance(ab, address_book_classes.AddressBook) == False:
-        ab = AddressBook()
+    ab.load_data()
     main()

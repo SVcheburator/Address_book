@@ -1,3 +1,4 @@
+import pickle
 from collections import UserDict
 from datetime import datetime
 
@@ -309,6 +310,29 @@ class AddressBook(UserDict):
             print(result)
         else:
             print(f"Nothing was found by '{inp}'\n")
+    
+    # Autosave functions
+    def save_data(self):
+        with open('ab_save.bin', 'wb') as f:
+            pickle.dump(self.data, f)
+
+    def load_data(self):
+        try:
+            with open('ab_save.bin', 'rb') as f:
+                try:
+                    self.data = pickle.load(f)
+                except EOFError:
+                    try:
+                        self.data = pickle.loads(f)
+                    except TypeError:
+                        self.data = AddressBook()
+                except TypeError:
+                    self.data = AddressBook()
+
+        except FileNotFoundError:
+            with open('ab_save.bin', 'x'):
+                pass
+            self.load_data()
 
     current_index = 0
 
